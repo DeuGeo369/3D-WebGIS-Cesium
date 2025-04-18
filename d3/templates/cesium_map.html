@@ -1,0 +1,180 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cesium 3D Map</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+    html, body, #cesiumContainer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    // Optional: Set your Ion access token if you want imagery or terrain from Cesium Ion
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzNzU0YTc4Yy05NDdkLTQ2MjUtODQwNi1jOWQ3ZjAyMThjZjciLCJpZCI6Mjk0OTgzLCJpYXQiOjE3NDQ4OTQ3MDh9.WBTuZsLIh6Hhpby420O-fklGN8roDwixh9KZAeX7VFM';
+
+    async function initViewer() {
+      const terrain = await Cesium.createWorldTerrainAsync();
+
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+        terrainProvider: terrain,
+        baseLayerPicker: true,
+      });
+
+      // Optional: Fly to a position
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(85.324, 27.7172, 10000), // Kathmandu
+      });
+    }
+
+    initViewer();
+  </script>
+</body>
+</html> -->
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BIMS Map - Leaflet + Cesium 3D Toggle</title>
+  <link rel="stylesheet" href="{% static 'cesiumN/Widgets/widgets.css' %}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+  <style>
+    html, body, #map, #cesiumContainer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #toggle3d {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 9999;
+      padding: 8px 12px;
+      background: white;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #cesiumContainer {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="toggle3d">Switch to 3D</div>
+<div id="map"></div>
+<div id="cesiumContainer"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+<!-- Cesium -->
+<script src="{% static 'cesiumN/Cesium.js' %}"></script>
+
+<script>
+  // --- Leaflet Map ---
+  var map = L.map('map').setView([28.3949, 84.1240], 7);
+
+  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OSM Contributors'
+  }).addTo(map);
+
+  // Leaflet Draw
+  var drawnItems = new L.FeatureGroup().addTo(map);
+  var drawControl = new L.Control.Draw({
+    edit: { featureGroup: drawnItems },
+    draw: { polygon: true, marker: true, polyline: true, rectangle: true, circle: false }
+  }).addTo(map);
+
+  map.on(L.Draw.Event.CREATED, function (event) {
+    var layer = event.layer;
+    drawnItems.addLayer(layer);
+  });
+
+  // Coordinate Display
+  map.on('mousemove', function (e) {
+    document.getElementById('toggle3d').innerText = `Lat: ${e.latlng.lat.toFixed(5)}, Lng: ${e.latlng.lng.toFixed(5)} | Switch to 3D`;
+  });
+
+  // --- Cesium ---
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzNzU0YTc4Yy05NDdkLTQ2MjUtODQwNi1jOWQ3ZjAyMThjZjciLCJpZCI6Mjk0OTgzLCJpYXQiOjE3NDQ4OTQ3MDh9.WBTuZsLIh6Hhpby420O-fklGN8roDwixh9KZAeX7VFM'; // You can add your access token if needed
+
+  // var viewer = new Cesium.Viewer('cesiumContainer', {
+  //   terrainProvider: Cesium.CesiumTerrainProvider.fromUrl(
+  // Cesium.IonResource.fromAssetId(1)
+  // ),
+  //   baseLayerPicker: false,
+  //   geocoder: false,
+  //   timeline: false,
+  //   animation: false,
+  //   homeButton: false,
+  //   sceneModePicker: true,
+  //   navigationHelpButton: false,
+  //   infoBox: false,
+  //   selectionIndicator: false
+  // });
+
+  // // Default camera position (Nepal)
+  // viewer.scene.camera.setView({
+  //   // viewer.camera.flyTo({
+  //   destination: Cesium.Cartesian3.fromDegrees(85.324, 27.7172, 10000), // Kathmandu
+  //   // destination: Cesium.Cartesian3.fromDegrees(84.1240, 28.3949, 1000000.0)
+  // });
+
+  const viewerOptions = {
+  baseLayerPicker: false,
+  geocoder: false,
+  timeline: false,
+  animation: false,
+  homeButton: false,
+  sceneModePicker: true,
+  navigationHelpButton: false,
+  infoBox: false,
+  selectionIndicator: false
+};
+
+// Attempt to load Cesium Ion terrain (Asset ID 1 = global terrain)
+Cesium.CesiumTerrainProvider.fromIonAssetId(1)
+  .then(terrainProvider => {
+    new Cesium.Viewer('cesiumContainer', {
+      ...viewerOptions,
+      terrainProvider: terrainProvider
+    });
+  })
+  .catch(error => {
+    console.warn("Ion terrain failed to load, falling back to Ellipsoid terrain. Error:", error);
+    new Cesium.Viewer('cesiumContainer', {
+      ...viewerOptions,
+      terrainProvider: new Cesium.EllipsoidTerrainProvider()
+    });
+  });
+  
+  // --- Toggle View Button ---
+  let is3D = false;
+  document.getElementById('toggle3d').addEventListener('click', () => {
+    is3D = !is3D;
+    document.getElementById('map').style.display = is3D ? 'none' : 'block';
+    document.getElementById('cesiumContainer').style.display = is3D ? 'block' : 'none';
+    document.getElementById('toggle3d').innerText = is3D ? 'Switch to 2D' : 'Switch to 3D';
+  });
+</script>
+
+</body>
+</html>

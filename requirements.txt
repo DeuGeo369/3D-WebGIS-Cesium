@@ -1,0 +1,36 @@
+asgiref==3.8.1
+Django==5.2
+sqlparse==0.5.3
+tzdata==2025.2
+
+
+
+# # Create project folder
+#1  mkdir myproject && cd myproject
+
+# # Create virtual environment
+#2  python -m venv venv
+
+# # Activate it
+# # Windows
+# 3  venv\Scripts\activate
+
+# 4  pip install django
+# 5  pip freeze > requirements.txt
+# 6  django-admin startproject config .
+# 7  python manage.py startapp ....
+
+# 8  INSTALLED_APPS = [
+#     ...
+#     'core',
+#    ]
+
+# 9  Create a .gitignore file in the root:
+
+
+# 10  python manage.py migrate
+# 11  python manage.py runserver
+
+# 12  python manage.py createsuperuser
+
+# 13  pip install django-environ
